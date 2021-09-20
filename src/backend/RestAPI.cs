@@ -14,7 +14,7 @@ namespace CosmosDB_RestAPI
     {
         [FunctionName("RestAPI")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, [CosmosDB(databaseName: "my-database", collectionName: "my-container",
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req, [CosmosDB(databaseName: "my-database", collectionName: "my-container",
             ConnectionStringSetting = "CosmosDbConnectionString"
             )]IAsyncCollector<dynamic> documentsOut,
             ILogger log)
