@@ -1,10 +1,9 @@
 using System;
 
-namespace backend
+namespace CosmosDB_RestAPI
 {
-    public class ToDo
+    public class ToDoModel
     {
-        public Guid id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
     }

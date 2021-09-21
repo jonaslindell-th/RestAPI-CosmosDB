@@ -14,7 +14,7 @@ namespace CosmosDB_RestAPI
     {
         [FunctionName("RestAPI")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req, [CosmosDB(databaseName: "my-database", collectionName: "my-container",
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "Add-New-ToDo")] HttpRequest req, [CosmosDB(databaseName: "my-database", collectionName: "my-container",
             ConnectionStringSetting = "CosmosDbConnectionString"
             )]IAsyncCollector<object> todo,
             ILogger log)
@@ -25,11 +25,10 @@ namespace CosmosDB_RestAPI
             {
                  string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
 
-                var input = JsonConvert.DeserializeObject<ToDo>(requestBody);
+                var input = JsonConvert.DeserializeObject<ToDoModel>(requestBody);
 
-                var newTodo = new ToDo 
+                var newTodo = new ToDoModel 
                 {
-                    Id = System.Guid.NewGuid(),
                     Title = input.Title,
                     Description = input.Description
                 };
@@ -44,11 +43,5 @@ namespace CosmosDB_RestAPI
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
-    }
-    public class ToDo
-    {
-        public Guid Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
     }
 }
