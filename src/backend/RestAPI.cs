@@ -16,33 +16,39 @@ namespace CosmosDB_RestAPI
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req, [CosmosDB(databaseName: "my-database", collectionName: "my-container",
             ConnectionStringSetting = "CosmosDbConnectionString"
-            )]IAsyncCollector<dynamic> documentsOut,
+            )]IAsyncCollector<object> todo,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            string name = req.Query["name"];
-
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
-            
-            if (!string.IsNullOrEmpty(name))
+            try
             {
-                // Add a JSON document to the output container.
-                await documentsOut.AddAsync(new
-                {
-                    // create a random ID
-                    id = System.Guid.NewGuid().ToString(),
-                    name = name
-                });
-            }
+                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
 
-            string responseMessage = string.IsNullOrEmpty(name)
-                ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
-                : $"Hello, {name}. This HTTP triggered function executed successfully.";
-    
-            return new OkObjectResult(responseMessage);
+                var input = JsonConvert.DeserializeObject<ToDo>(requestBody);
+
+                var newTodo = new ToDo 
+                {
+                    Id = System.Guid.NewGuid(),
+                    Title = input.Title,
+                    Description = input.Description
+                };
+
+                await todo.AddAsync(newTodo);
+
+                return new OkObjectResult(newTodo);
+            }
+            catch (Exception ex)
+            {
+                log.LogError($"Couldn't insert item. Exception thrown: {ex.Message}");
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
         }
+    }
+    public class ToDo
+    {
+        public Guid Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
     }
 }
