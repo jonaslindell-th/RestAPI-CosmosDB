@@ -30,7 +30,8 @@ namespace CosmosDB_RestAPI
                 var newTodo = new ToDoModel 
                 {
                     Title = input.Title,
-                    Description = input.Description
+                    Description = input.Description,
+                    Created = DateTime.Now
                 };
 
                 await todo.AddAsync(newTodo);

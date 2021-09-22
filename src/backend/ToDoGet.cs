@@ -21,9 +21,13 @@ namespace CosmosDB_RestAPI
             ILogger log)
         {
             var searchterm = req.Query["searchterm"];
-            if (string.IsNullOrWhiteSpace(searchterm))
+            if (!string.IsNullOrWhiteSpace(searchterm))
             {
-                return (ActionResult)new NotFoundResult();
+                Uri collectionUriSearch = UriFactory.CreateDocumentCollectionUri("my-database", "my-container");
+                IDocumentQuery<ToDoModel> querySearch = client.CreateDocumentQuery<ToDoModel>(collectionUriSearch, new FeedOptions { EnableCrossPartitionQuery = true })
+                    .Where(p => p.Title.Contains(searchterm))
+                    .AsDocumentQuery();
+                return new OkObjectResult(querySearch);
             }
 
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri("my-database", "my-container");
@@ -31,7 +35,7 @@ namespace CosmosDB_RestAPI
             log.LogInformation($"Searching for: {searchterm}");
 
             IDocumentQuery<ToDoModel> query = client.CreateDocumentQuery<ToDoModel>(collectionUri, new FeedOptions { EnableCrossPartitionQuery = true })
-                .Where(p => p.Title.Contains(searchterm))
+                .Select(p => p)
                 .AsDocumentQuery();
 
             while (query.HasMoreResults)
