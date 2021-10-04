@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_NAME: cosmos-api-jonas
+  AZURE_FUNCTIONAPP_NAME: todo-rest-api-jonas
   AZURE_FUNCTION_PROJ_PATH: ./src/backend
   ROOT_SOLUTION_PATH: ./src/backend
 
