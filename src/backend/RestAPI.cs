@@ -14,7 +14,7 @@ namespace CosmosDB_RestAPI
     {
         [FunctionName("RestAPI")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "Add-New-ToDo")] HttpRequest req, [CosmosDB(databaseName: "my-database", collectionName: "my-container",
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "Add-New-ToDo")] HttpRequest req, [CosmosDB(databaseName: "todo-cosmos", collectionName: "todo",
             ConnectionStringSetting = "CosmosDbConnectionString"
             )]IAsyncCollector<object> todo,
             ILogger log)

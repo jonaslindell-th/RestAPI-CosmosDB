@@ -16,21 +16,21 @@ namespace CosmosDB_RestAPI
     {
         [FunctionName("ToDoGet")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req, [CosmosDB(databaseName: "my-database", collectionName: "my-container",
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req, [CosmosDB(databaseName: "todo-cosmos", collectionName: "todo",
             ConnectionStringSetting = "CosmosDbConnectionString")] DocumentClient client,
             ILogger log)
         {
             var searchterm = req.Query["searchterm"];
             if (!string.IsNullOrWhiteSpace(searchterm))
             {
-                Uri collectionUriSearch = UriFactory.CreateDocumentCollectionUri("my-database", "my-container");
+                Uri collectionUriSearch = UriFactory.CreateDocumentCollectionUri("todo-cosmos", "todo");
                 IDocumentQuery<ToDoModel> querySearch = client.CreateDocumentQuery<ToDoModel>(collectionUriSearch, new FeedOptions { EnableCrossPartitionQuery = true })
                     .Where(p => p.Title.Contains(searchterm))
                     .AsDocumentQuery();
                 return new OkObjectResult(querySearch);
             }
 
-            Uri collectionUri = UriFactory.CreateDocumentCollectionUri("my-database", "my-container");
+            Uri collectionUri = UriFactory.CreateDocumentCollectionUri("todo-cosmos", "todo");
 
             log.LogInformation($"Searching for: {searchterm}");
 
